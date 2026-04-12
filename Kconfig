@@ -1,0 +1,119 @@
+# pForth - Portable Forth for Zephyr
+#
+# Copyright (c) 2025 Jon Sharp
+# SPDX-License-Identifier: MIT
+
+menuconfig PFORTH
+	bool "pForth - Portable Forth interpreter"
+	help
+	  Enable pForth, a portable Forth interpreter written in ANSI C.
+	  Provides an interactive Forth programming environment.
+
+if PFORTH
+
+config PFORTH_SHELL
+	bool "Enable pForth shell command"
+	default y
+	depends on SHELL
+	help
+	  Add a 'forth' command to the Zephyr shell to start the
+	  Forth interpreter.
+
+config PFORTH_DICTIONARY_SIZE
+	int "Dictionary size (bytes)"
+	default 65536
+	help
+	  Size of the Forth dictionary in bytes. This holds compiled
+	  Forth words and definitions.
+
+config PFORTH_HEADER_SIZE
+	int "Header size (bytes)"
+	default 16384
+	help
+	  Size of the dictionary header space in bytes.
+
+config PFORTH_USER_STACK_DEPTH
+	int "User stack depth (cells)"
+	default 512
+	help
+	  Depth of the Forth data stack in cells.
+
+config PFORTH_RETURN_STACK_DEPTH
+	int "Return stack depth (cells)"
+	default 512
+	help
+	  Depth of the Forth return stack in cells.
+
+config PFORTH_FLOATING_POINT
+	bool "Enable floating point support"
+	default n
+	help
+	  Enable floating point number support in pForth.
+	  Increases code size and requires FPU or soft-float.
+
+config PFORTH_FILEIO
+	bool "Enable file I/O support"
+	default n
+	help
+	  Enable file I/O words (OPEN-FILE, READ-FILE, etc.).
+	  Requires a file system or namespace layer.
+
+config PFORTH_FILEIO_NAMESPACE
+	bool "Use namespace layer for file I/O"
+	default y
+	depends on PFORTH_FILEIO
+	help
+	  Use the Zephyr namespace layer (ns_open, ns_read, etc.)
+	  for file I/O. This integrates with 9P mounts and local
+	  file systems.
+
+	  The application must provide the namespace API (ns.h with
+	  ns_open, ns_read, ns_write, ns_close, ns_seek, ns_tell,
+	  ns_create, ns_remove functions).
+
+	  This is ideal for zrc-based projects and any application
+	  using the 9P protocol for file access.
+
+choice PFORTH_IO_BACKEND
+	prompt "I/O backend"
+	default PFORTH_IO_SHELL
+
+config PFORTH_IO_SHELL
+	bool "Zephyr shell"
+	depends on SHELL
+	help
+	  Use the Zephyr shell for Forth I/O. Output goes to the
+	  shell's transport and input comes from the shell.
+
+config PFORTH_IO_CONSOLE
+	bool "Console device"
+	help
+	  Use the Zephyr console device directly for I/O.
+
+config PFORTH_IO_CUSTOM
+	bool "Custom I/O callbacks"
+	help
+	  Use custom I/O callbacks provided by the application.
+	  The application must provide pforth_set_io_callbacks().
+
+endchoice
+
+config PFORTH_QUIET
+	bool "Quiet startup"
+	default n
+	help
+	  Suppress pForth startup banner and messages.
+
+config PFORTH_STATIC_DICTIONARY
+	bool "Use static dictionary"
+	default n
+	help
+	  Use a pre-compiled dictionary embedded in the firmware.
+	  This avoids needing to load dictionary from file system.
+	  Requires generating pfdicdat.h on a host system first.
+
+module = PFORTH
+module-str = pforth
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # PFORTH

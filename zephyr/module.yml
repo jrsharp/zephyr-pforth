@@ -1,0 +1,6 @@
+name: pforth
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    board_root: .
