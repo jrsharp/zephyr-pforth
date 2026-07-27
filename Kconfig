@@ -98,6 +98,15 @@ config PFORTH_IO_CUSTOM
 
 endchoice
 
+config PFORTH_APP_CUSTOM
+	bool "Application provides custom word glue"
+	default n
+	help
+	  Exclude the stock pfcustom.c placeholder (CTEST0/CTEST1).
+	  The application must provide CustomFunctionTable[] and
+	  CompileCustomFunctions() (see csrc/pfcustom.c for the
+	  pattern) to add its own C-glue words to the dictionary.
+
 config PFORTH_QUIET
 	bool "Quiet startup"
 	default n

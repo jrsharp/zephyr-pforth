@@ -30,6 +30,12 @@ if(NOT CONFIG_PFORTH_FILEIO)
     zephyr_compile_definitions(PF_NO_FILEIO)
 endif()
 
+if(CONFIG_PFORTH_APP_CUSTOM)
+    # Empties csrc/pfcustom.c; the application supplies
+    # CustomFunctionTable[] and CompileCustomFunctions().
+    zephyr_compile_definitions(PF_USER_CUSTOM=1)
+endif()
+
 # Core pForth sources
 zephyr_library_sources(
     ${PFORTH_CSRC_DIR}/pf_core.c

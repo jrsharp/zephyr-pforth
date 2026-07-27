@@ -127,6 +127,19 @@ int pforth_exec_word(const char *word)
 	return (int)pfExecIfDefined(word);
 }
 
+int pforth_include(const char *path)
+{
+	if (!initialized) {
+		return -EINVAL;
+	}
+
+	if (!path || !*path) {
+		return 0;
+	}
+
+	return (int)pfIncludeFile(path);
+}
+
 void pforth_shutdown(void)
 {
 	if (!initialized) {

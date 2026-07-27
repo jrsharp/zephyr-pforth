@@ -57,6 +57,17 @@ int pforth_exec(const char *source);
 int pforth_exec_word(const char *word);
 
 /**
+ * @brief Compile a Forth source file into the dictionary
+ *
+ * Runs the file through the outer interpreter (INCLUDED semantics),
+ * using the configured file I/O backend.
+ *
+ * @param path File path (namespace path when PFORTH_FILEIO_NAMESPACE)
+ * @return 0 on success, non-zero Forth throw code on error
+ */
+int pforth_include(const char *path);
+
+/**
  * @brief Shutdown pForth
  *
  * Releases all pForth resources. After calling this, pforth_init()
