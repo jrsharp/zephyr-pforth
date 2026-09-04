@@ -26,8 +26,10 @@ static volatile bool forth_running;
 /*
  * Shell bypass handler - receives raw input when in Forth mode
  */
-static void forth_shell_bypass(const struct shell *sh, uint8_t *data, size_t len)
+static void forth_shell_bypass(const struct shell *sh, uint8_t *data, size_t len,
+			       void *user_data)
 {
+	ARG_UNUSED(user_data);
 	ARG_UNUSED(sh);
 
 	for (size_t i = 0; i < len; i++) {
@@ -69,13 +71,13 @@ static int cmd_forth(const struct shell *sh, size_t argc, char **argv)
 
 	/* Enable bypass mode to receive raw input */
 	forth_running = true;
-	shell_set_bypass(sh, forth_shell_bypass);
+	shell_set_bypass(sh, forth_shell_bypass, NULL);
 
 	/* Run the Forth interpreter */
 	ret = pforth_run();
 
 	/* Disable bypass mode */
-	shell_set_bypass(sh, NULL);
+	shell_set_bypass(sh, NULL, NULL);
 	forth_running = false;
 
 	shell_print(sh, "");
