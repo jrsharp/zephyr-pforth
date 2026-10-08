@@ -70,7 +70,10 @@ cell_t          gVarQuiet;        /* Suppress unnecessary messages, OK, etc. */
 cell_t          gVarReturnCode;   /* Returned to caller of Forth, eg. UNIX shell. */
 
 /* data for INCLUDE that allows multiple nested files. */
-IncludeFrame    gIncludeStack[MAX_INCLUDE_DEPTH];
+#ifndef PF_EXT_RAM
+#define PF_EXT_RAM
+#endif
+IncludeFrame    gIncludeStack[MAX_INCLUDE_DEPTH] PF_EXT_RAM;
 cell_t          gIncludeIndex;
 
 static void pfResetForthTask( void );

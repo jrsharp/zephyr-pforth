@@ -17,6 +17,8 @@
 
 /* Use PSRAM for pForth memory allocation on ESP32 */
 #ifdef CONFIG_ESP_SPIRAM
+/* Static arrays of plain data that need not use internal RAM */
+#define PF_EXT_RAM __attribute__((section(".ext_ram.bss")))
 #include <zephyr/multi_heap/shared_multi_heap.h>
 /* pForth uses pfAllocMem/pfFreeMem - route to PSRAM via shared_multi_heap */
 #define pfInitMemoryAllocator()
