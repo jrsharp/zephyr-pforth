@@ -201,8 +201,8 @@ FileStream *sdOpenFile(const char *FileName, const char *Mode)
     /* Resolve relative paths to full namespace paths */
     path = resolve_path(FileName, resolved_path, sizeof(resolved_path));
 
-    /* Try to open existing file first */
-    fd = ns_open(path, ns_mode);
+    /* Try to open existing file first; "w" empties it, as fopen does */
+    fd = ns_open(path, truncate ? (ns_mode | NINEP_OTRUNC) : ns_mode);
 
     if (fd < 0 && create) {
         /* File doesn't exist, try to create it */
@@ -216,12 +216,6 @@ FileStream *sdOpenFile(const char *FileName, const char *Mode)
     }
 
     stream->fd = fd;
-
-    /* Handle truncate - for now, just seek to start (truncate not fully supported) */
-    if (truncate) {
-        ns_seek(fd, 0, FS_SEEK_SET);
-        /* Note: True truncation would require ns_truncate or similar */
-    }
 
     /* Handle append by seeking to end */
     if (append) {
